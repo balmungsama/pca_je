@@ -56,6 +56,8 @@ MSalience = 0;
 
 for boot = 1:nboot
 	
+	disp([bs num2str(boot)]) ;
+
 	isub = ceil( size(XX,1) * rand(1,size(XX,1)) );
 
 	XX_b = XX(isub,:);
