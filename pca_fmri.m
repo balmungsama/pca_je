@@ -82,7 +82,7 @@ end
 VSalience = RSalience/nboot - (MSalience/nboot) .^ 2;
 
 % bootstrap SE
-VSalience = nboot/VSalience/(nboot - 1);
+VSalience = nboot * VSalience/(nboot - 1);
 
 % BS ratio
 bs_ratio = V ./ sqrt(VSalience);
