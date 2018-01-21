@@ -13,7 +13,7 @@ filters = {'yng', 'sNorm'} ;
 filters = ['*' strjoin(filters, '*') '*'] ;
 
 runs = fullfile(top_dir, filters) ;
-runs = ls(runs);
+runs = dir(runs);
 runs = {runs.name} ;
 
 for run = 1:size(runs,2)
