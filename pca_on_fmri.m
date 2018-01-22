@@ -199,7 +199,7 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 			disp(['r_sign = ', num2str(size(r_sign, 2))]);
 		end
 
-		disp(['the relevant r_sign is ', num2str(r_sign(ii, jj))]);
+		% disp(['the relevant r_sign is ', num2str(r_sign(ii, jj))]);
 
 		pc_ind( ii) = jj;
 		pc_sign(ii) = r_sign(ii, jj) ;
