@@ -83,7 +83,10 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	pls_sort = pls_loo;
 	for ii = 1:size(XX,1)
 
-		[ind(ii, :),sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
+		disp(['size: ' num2str(size(pls_main.Salience   ))]);
+		disp(['size: ' num2str(size(pls_loo(ii).Salience))]);
+
+		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
 
 		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
 		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
