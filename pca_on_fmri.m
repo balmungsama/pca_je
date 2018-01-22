@@ -184,7 +184,7 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 			disp(['r_sign = ', num2str(size(r_sign, 1))]);
 		end
 
-		if jj > size(r_sign,1)
+		if jj > size(r_sign,2)
 			disp('ii is too large');
 			disp(['    ii = ' num2str(size(r_sign,  2))]);
 			disp(['r_sign = ', num2str(size(r_sign, 2))]);
