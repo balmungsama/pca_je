@@ -47,6 +47,8 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	%% leave-one-out iterations %%
 
 	for ii = 1:size(XX,1)
+		disp(['SUBJECT ', num2str(ii)]);
+
 		xx       = XX;
 		xo       = xx(ii,:);
 		xx(ii,:) = [];
@@ -67,6 +69,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 
 	%% main pca %%
 
+	disp('MAIN PCA')
 	[pls_main(ii).Salience, pls_main(ii).pcs, pls_main(ii).ZSalience, pls_main(ii).VSalience] = run_pca(xx, nboot);
 
 	%% averaging the results across each leave-one-out iteration %%
@@ -118,7 +121,7 @@ function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm, nboot)
 	RSalience = 0;
 	MSalience = 0;
 
-	disp('BOOTSTRAP');
+	% disp('BOOTSTRAP');
 	for boot = 1:nboot
 		
 		disp(['	bs ' num2str(boot)]) ;
