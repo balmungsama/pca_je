@@ -99,6 +99,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		disp(['size(pls_loo(ii).Salience ) = ', num2str(size(pls_loo(ii).Salience ))]);
 		disp(['size(pls_loo(ii).pcs      ) = ', num2str(size(pls_loo(ii).pcs      ))]);
 		disp(['size(pls_loo(ii).pcs_Xo   ) = ', num2str(size(pls_loo(ii).pcs_Xo   ))]);
+		disp(['                  ind(ii,:) = ', num2str(ind(ii, : ))]);
 
 		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
 		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
