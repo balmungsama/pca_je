@@ -1,105 +1,154 @@
+%% user options %%
+
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
 output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_testPLS.mat' ;
 
-%% user options %%
-
 pipe = 3;
-nperm = 1000;
 nboot = 1000;
 filters = {'yng', 'sNorm'} ;
 
-%% script begins %%
+%% run the function %%
 
-filters = ['*' strjoin(filters, '*') '*'] ;
+[pls_fmri.avg_ZSalience, pls_fmri.pls_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
 
-runs = fullfile(top_dir, filters) ;
-runs = dir(runs);
-runs = {runs.name} ;
+%% save the output %%
+save(output, 'pls_fmri') ;
 
-for run = 1:size(runs,2)
-	run_nm  = runs{run} ;
-	run_nm  = fullfile(top_dir, run_nm) ;
+%%%%%%%%%%%%%%%
+%% functions %%
+%%%%%%%%%%%%%%%
 
-	run_spm = load_nii(run_nm) ;
-	run_spm = run_spm.img ;
-	run_spm = run_spm(:,:,:,pipe);
-	img_dim = size(run_spm);
-	run_spm = reshape(run_spm, [1, prod(size(run_spm))]) ;
+function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nboot)
 
-	XX(run,:) = run_spm ;
+	if ~exist('nboot')
+		nboot = 1000;
+	end
+
+	filters = ['*' strjoin(filters, '*') '*'] ;
+
+	runs = fullfile(top_dir, filters) ;
+	runs = dir(runs);
+	runs = {runs.name} ;
+
+	for run = 1:size(runs,2)
+		run_nm  = runs{run} ;
+		run_nm  = fullfile(top_dir, run_nm) ;
+
+		run_spm = load_nii(run_nm) ;
+		run_spm = run_spm.img ;
+		run_spm = run_spm(:,:,:,pipe);
+		img_dim = size(run_spm);
+		run_spm = reshape(run_spm, [1, prod(size(run_spm))]) ;
+
+		XX(run,:) = run_spm ;
+
+	end
+
+	%% leave-one-out iterations %%
+
+	for ii = 1:size(XX,1)
+		xx       = XX;
+		xo       = xx(ii,:);
+		xx(ii,:) = [];
+
+		xm   = mean(xx);
+		xxstd = std(xx);
+
+		% normalization
+		xo = (xo - xxm)./xstd;
+		xx = zscore(xx);
+
+		% running code
+		[pls_loo(ii).Salience, pls_loo(ii).pcs, pls_loo(ii).ZSalience, pls_loo(ii).VSalience] = run_pca(xx);
+
+		pls_loo(ii).pcs_Xo = xo * pls_loo(ii).Salience ;
+
+	end
+
+	%% main pca %%
+
+	[pls_main(ii).Salience, pls_main(ii).pcs, pls_main(ii).ZSalience, pls_main(ii).VSalience] = run_pca(xx);
+
+	%% averaging the results across each leave-one-out iteration %%
+
+	pls_sort = loo;
+	for ii = 1:size(XX,1)
+
+		[ind(ii, :),sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_res(ii).Salience) ;
+
+		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
+		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
+		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
+		pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
+
+	end
+
+	pls_out = pls_sort;
+
+	for ii = 1:size(XX,1)
+		avg_ZSalience_X(:,:,ii) = pls_sort.ZSalience ;
+	end
+
+	avg_ZSalience = mean(avg_ZSalience, 3) ;
 
 end
 
-%% normalization %%
+%% perform PCA %%
 
-% column-wise normalization
+function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm)
 
-XX_norm = zscore(XX) ;
+	[U, Sig, V] = svd(XX_norm, 'econ') ;
 
-%% SVD %%
+	Salience = V;
 
-[U, Sig, V] = svd(XX_norm, 'econ') ;
+	% project eigenimages onto the BOLD image subspace
+	pcs = XX_norm * V ;
 
-% accounted for variance
-pc_var = diag(Sig) ;
-pc_var = pc_var ./ sum(pc_var) ;
+	% accounted for variance
+	pc_var = diag(Sig) ;
+	pc_var = pc_var ./ sum(pc_var) ;
 
-% compute pc scores
-pc_scores = U * Sig ;
+	% % compute pc scores
+	% pc_scores = U * Sig ;
 
-%% permutation testing %%
+	%% permutation testing %%
 
-%% bootstrap testing %%
+	%% bootstrap testing %%
 
-RSalience = 0;
-MSalience = 0;
+	RSalience = 0;
+	MSalience = 0;
 
-disp('BOOTSTRAP');
-for boot = 1:nboot
-	
-	disp(['	bs ' num2str(boot)]) ;
+	disp('BOOTSTRAP');
+	for boot = 1:nboot
+		
+		disp(['	bs ' num2str(boot)]) ;
 
-	isub = ceil( size(XX,1) * rand(1,size(XX,1)) );
+		isub = ceil( size(XX,1) * rand(1,size(XX,1)) );
 
-	XX_b = XX_norm(isub,:);
+		XX_b = XX_norm(isub,:);
 
-	% svd
-	[Ub, Sigb, Vb] = svd(XX_b, 'econ') ;
+		% svd
+		[Ub, Sigb, Vb] = svd(XX_b, 'econ') ;
 
-	[pc_sort, pc_signs] = sort_eigen_images(V, Vb) ;
+		[pc_sort, pc_signs] = sort_eigen_images(V, Vb) ;
 
-	Vb_sort = Vb(:, pc_sort);
-	Vb_sort = bsxfun(@times, Vb_sort, pc_signs);
+		Vb_sort = Vb(:, pc_sort);
+		Vb_sort = bsxfun(@times, Vb_sort, pc_signs);
 
-	RSalience = RSalience + Vb_sort .^ 2 ;
-	MSalience = MSalience + Vb_sort      ;
+		RSalience = RSalience + Vb_sort .^ 2 ;
+		MSalience = MSalience + Vb_sort      ;
 
+	end
+
+	% var(x) = E(x2) - E(x)^2
+	VSalience = RSalience/nboot - (MSalience/nboot) .^ 2;
+
+	% bootstrap SE
+	VSalience = nboot * VSalience/(nboot - 1);
+
+	% BS ratio
+	ZSalience = V ./ sqrt(VSalience);
 end
-
-% var(x) = E(x2) - E(x)^2
-VSalience = RSalience/nboot - (MSalience/nboot) .^ 2;
-
-% bootstrap SE
-VSalience = nboot * VSalience/(nboot - 1);
-
-% BS ratio
-bs_ratio = V ./ sqrt(VSalience);
-
-%% average the BS ratios across participants
-
-%% output %%
-
-pls_out.dim = img_dim  ;
-pls_out.X   = XX_norm  ;
-pls_out.U   = U        ;
-pls_out.Sig = Sig      ;
-pls_out.V   = V        ;
-pls_out.var = pc_var   ;
-pls_out.bsr = bs_ratio ;
-
-%% save output %%
-
-save(output, 'pls_out');
 
 %% sort eigen images %%
 
