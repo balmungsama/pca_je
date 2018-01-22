@@ -76,7 +76,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	%% main pca %%
 
 	disp('MAIN PCA')
-	[pls_main(ii).Salience, pls_main(ii).pcs, pls_main(ii).ZSalience, pls_main(ii).VSalience] = run_pca(xx, nboot);
+	[pls_main.Salience, pls_main.pcs, pls_main.ZSalience, pls_main.VSalience] = run_pca(xx, nboot);
 
 	%% averaging the results across each leave-one-out iteration %%
 
