@@ -178,9 +178,17 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
-		disp('r_sign');
-		disp([ii jj]);
-		disp(' ');
+		if ii > size(r_sign,1)
+			disp('ii is too large');
+			disp(['    ii = ' num2str(size(r_sign,  1))]);
+			disp(['r_sign = ', num2str(size(r_sign, 1))]);
+		end
+
+		if jj > size(r_sign,1)
+			disp('ii is too large');
+			disp(['    ii = ' num2str(size(r_sign,  2))]);
+			disp(['r_sign = ', num2str(size(r_sign, 2))]);
+		end
 
 		pc_ind( ii) = jj;
 		pc_sign(ii) = r_sign(ii, jj) ;
