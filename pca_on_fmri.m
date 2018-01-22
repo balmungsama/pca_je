@@ -1,3 +1,9 @@
+%% TODO %%
+
+% make sure the bootstrap ratios are all good (try to match Randy's formula)
+% optimize runtime any way possible. This takes WAY too long.
+% add the input SPM filenames to teh final ouput
+
 %% user options %%
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
