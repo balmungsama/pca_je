@@ -52,10 +52,10 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		xx(ii,:) = [];
 
 		xm   = mean(xx);
-		xxstd = std(xx);
+		xstd = std(xx);
 
 		% normalization
-		xo = (xo - xxm)./xstd;
+		xo = (xo - xm)./xstd;
 		xx = zscore(xx);
 
 		% running code
