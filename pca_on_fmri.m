@@ -76,7 +76,12 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	%% main pca %%
 
 	disp('MAIN PCA')
-	[pls_main.Salience, pls_main.pcs, pls_main.ZSalience, pls_main.VSalience] = run_pca(xx, nboot);
+
+	% normalization
+
+	XX_norm = zscore(XX);
+
+	[pls_main.Salience, pls_main.pcs, pls_main.ZSalience, pls_main.VSalience] = run_pca(XX_norm, nboot);
 
 	%% averaging the results across each leave-one-out iteration %%
 
