@@ -101,10 +101,21 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		disp(['size(pls_loo(ii).pcs_Xo   ) = ', num2str(size(pls_loo(ii).pcs_Xo   ))]);
 		disp(['                  ind(ii,:) = ', num2str(ind(ii, : ))]);
 
-		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
-		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
-		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
-		pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
+		signs = sg(ii ,:);
+		index = ind(ii,:);
+		signs(find(index == 0)) = [];
+		index(find(index == 0)) = [];
+
+
+		% pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
+		% pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
+		% pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
+		% pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
+
+		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , index), signs) ;
+		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , index), signs) ;
+		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , index), signs) ;
+		pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , index), signs) ;
 
 	end
 
