@@ -10,7 +10,7 @@ top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sar
 output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_testPLS.mat' ;
 
 pipe = 3;
-nboot = 1000;
+nboot = 10;
 filters = {'yng', 'sNorm'} ;
 
 %% run the function %%
