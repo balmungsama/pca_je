@@ -208,7 +208,7 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
-		% disp(['[ii, jj] = ', num2str([ii, jj])]);
+		disp(['[ii, jj] = ', num2str([ii, jj])]);
 
 		if ii > size(r_sign,1)
 			disp('ii is too large');
