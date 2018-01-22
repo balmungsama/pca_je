@@ -10,7 +10,7 @@ top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sar
 output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_testPLS.mat' ;
 
 pipe = 3;
-nboot = 10;
+nboot = 5;
 filters = {'yng', 'sNorm'} ;
 
 %% run the function %%
@@ -83,8 +83,8 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	pls_sort = pls_loo;
 	for ii = 1:size(XX,1)
 
-		disp(['size: ' num2str(size(pls_main.Salience   ))]);
-		disp(['size: ' num2str(size(pls_loo(ii).Salience))]);
+		disp(['pls_main: ' num2str(size(pls_main.Salience   ))]);
+		disp([' pls_loo: ' num2str(size(pls_loo(ii).Salience))]);
 
 		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
 
