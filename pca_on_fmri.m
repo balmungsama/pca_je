@@ -114,6 +114,8 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		% pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
 		% pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
 
+		disp(['this is it! ', num2str(size(pls_loo(ii).ZSalience( : , index))) ])
+
 		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , index), signs) ;
 		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , index), signs) ;
 		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , index), signs) ;
