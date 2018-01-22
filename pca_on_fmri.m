@@ -170,6 +170,8 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 	numpcs.bs   = size(bs_V  , 2);
 	numpcs      = min(numpcs.orig, numpcs.bs);
 
+	disp(['numpcs is equal to ', num2str(numpcs)]);
+
 	r_tmp  = corr(orig_V, bs_V) ;
 	r_sign = sign(r_tmp) ;
 	r_tmp  = abs( r_tmp) ; 
