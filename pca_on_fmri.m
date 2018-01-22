@@ -123,7 +123,7 @@ function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm, nboot)
 		
 		disp(['	bs ' num2str(boot)]) ;
 
-		isub = ceil( size(XX,1) * rand(1,size(XX,1)) );
+		isub = ceil( size(XX_norm,1) * rand(1,size(XX_norm,1)) );
 
 		XX_b = XX_norm(isub,:);
 
