@@ -88,8 +88,9 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	pls_sort = pls_loo;
 	for ii = 1:size(XX,1)
 
-		disp(['pls_main: ' num2str(size(pls_main.Salience   ))]);
-		disp([' pls_loo: ' num2str(size(pls_loo(ii).Salience))]);
+		% disp(['pls_main: ' num2str(size(pls_main.Salience   ))]);
+		% disp([' pls_loo: ' num2str(size(pls_loo(ii).Salience))]);
+		disp(['ii = ' num2str(ii)]);
 
 		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
 
