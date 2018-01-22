@@ -178,6 +178,10 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
+		disp('r_sign');
+		disp(r_sign);
+		disp(' ');
+
 		pc_ind( ii) = jj;
 		pc_sign(ii) = r_sign(ii, jj) ;
 		r_tmp(ii,:) = -1;
