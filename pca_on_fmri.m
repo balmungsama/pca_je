@@ -80,7 +80,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 
 	%% averaging the results across each leave-one-out iteration %%
 
-	pls_sort = loo;
+	pls_sort = pls_loo;
 	for ii = 1:size(XX,1)
 
 		[ind(ii, :),sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_res(ii).Salience) ;
