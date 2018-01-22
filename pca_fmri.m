@@ -54,16 +54,14 @@ pc_scores = U * Sig ;
 RSalience = 0;
 MSalience = 0;
 
+disp('BOOTSTRAP');
 for boot = 1:nboot
 	
-	disp(['bs ' num2str(boot)]) ;
+	disp(['		bs ' num2str(boot)]) ;
 
 	isub = ceil( size(XX,1) * rand(1,size(XX,1)) );
 
-	XX_b = XX(isub,:);
-
-	% normalization
-	XX_b = zscore(XX_b);
+	XX_b = XX_norm(isub,:);
 
 	% svd
 	[Ub, Sigb, Vb] = svd(XX_b, 'econ') ;
