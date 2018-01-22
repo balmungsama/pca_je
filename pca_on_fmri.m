@@ -59,7 +59,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		xx = zscore(xx);
 
 		% running code
-		[pls_loo(ii).Salience, pls_loo(ii).pcs, pls_loo(ii).ZSalience, pls_loo(ii).VSalience] = run_pca(xx);
+		[pls_loo(ii).Salience, pls_loo(ii).pcs, pls_loo(ii).ZSalience, pls_loo(ii).VSalience] = run_pca(xx, nboot);
 
 		pls_loo(ii).pcs_Xo = xo * pls_loo(ii).Salience ;
 
@@ -67,7 +67,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 
 	%% main pca %%
 
-	[pls_main(ii).Salience, pls_main(ii).pcs, pls_main(ii).ZSalience, pls_main(ii).VSalience] = run_pca(xx);
+	[pls_main(ii).Salience, pls_main(ii).pcs, pls_main(ii).ZSalience, pls_main(ii).VSalience] = run_pca(xx, nboot);
 
 	%% averaging the results across each leave-one-out iteration %%
 
@@ -95,7 +95,7 @@ end
 
 %% perform PCA %%
 
-function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm)
+function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm, nboot)
 
 	[U, Sig, V] = svd(XX_norm, 'econ') ;
 
