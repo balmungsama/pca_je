@@ -85,6 +85,8 @@ VSalience = nboot * VSalience/(nboot - 1);
 % BS ratio
 bs_ratio = V ./ sqrt(VSalience);
 
+%% average the BS ratios across participants
+
 %% output %%
 
 pls_out.dim = img_dim  ;
