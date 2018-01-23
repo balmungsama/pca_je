@@ -53,7 +53,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	%% leave-one-out iterations %%
 
 	for ii = 1:size(XX,1)
-		disp(['SUBJECT ', num2str(ii)]);
+		disp(ii);
 
 		xx       = XX;
 		xo       = xx(ii,:);
@@ -90,36 +90,31 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 
 		% disp(['pls_main: ' num2str(size(pls_main.Salience   ))]);
 		% disp([' pls_loo: ' num2str(size(pls_loo(ii).Salience))]);
-		disp(['subj = ' num2str(ii)]);
+		% disp(['subj = ' num2str(ii)]);
 
 		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
-		
-		disp(['size(pls_loo)               = ', num2str(size(pls_loo))]);
-		disp(['size(pls_loo(ii).ZSalience) = ', num2str(size(pls_loo(ii).ZSalience))]);
-		disp(['size(pls_loo(ii).Salience ) = ', num2str(size(pls_loo(ii).Salience ))]);
-		disp(['size(pls_loo(ii).pcs      ) = ', num2str(size(pls_loo(ii).pcs      ))]);
-		disp(['size(pls_loo(ii).pcs_Xo   ) = ', num2str(size(pls_loo(ii).pcs_Xo   ))]);
-		disp(['                  ind(ii,:) = ', num2str(ind(ii, : ))]);
 
-		signs = sg(ii ,:);
-		index = ind(ii,:);
-		signs(find(index == 0)) = [];
-		index(find(index == 0)) = [];
+		% signs = sg(ii ,:);
+		% index = ind(ii,:);
+		% signs(find(index == 0)) = [];
+		% index(find(index == 0)) = [];
 
-		disp(['                  index     = ', num2str(index)]);
-		disp(['                  signs     = ', num2str(signs)]);
+		% pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , index), signs) ;
+		% pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , index), signs) ;
+		% pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , index), signs) ;
+		% pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , index), signs) ;
 
-		% pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
-		% pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
-		% pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
-		% pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
+		% disp(['                  index     = ', num2str(index)]);
+		% disp(['                  signs     = ', num2str(signs)]);
 
-		disp(['this is it! ', num2str(size(pls_loo(ii).ZSalience( : , index))) ]);
+		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind(ii,: )), sg(ii,: )) ;
+		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind(ii,: )), sg(ii,: )) ;
+		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
+		pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
 
-		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , index), signs) ;
-		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , index), signs) ;
-		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , index), signs) ;
-		pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , index), signs) ;
+		% disp(['this is it! ', num2str(size(pls_loo(ii).ZSalience( : , index))) ]);
+
+
 
 	end
 
@@ -161,7 +156,7 @@ function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm, nboot)
 	% disp('BOOTSTRAP');
 	for boot = 1:nboot
 		
-		disp(['	bs ' num2str(boot)]) ;
+		% disp(['	bs ' num2str(boot)]) ;
 
 		isub = ceil( size(XX_norm,1) * rand(1,size(XX_norm,1)) );
 
@@ -208,8 +203,8 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
-		disp(ii);
-		disp(jj);
+		% disp(ii);
+		% disp(jj);
 
 		% disp(['the relevant r_sign is ', num2str(r_sign(ii, jj))]);
 
