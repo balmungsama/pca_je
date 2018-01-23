@@ -208,8 +208,8 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
-		disp(['ii = ' num2str(ii)]);
-		disp(['jj = ' num2str(jj)]);
+		disp(ii);
+		disp(jj);
 
 		% disp(['the relevant r_sign is ', num2str(r_sign(ii, jj))]);
 
