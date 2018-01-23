@@ -90,7 +90,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 
 		% disp(['pls_main: ' num2str(size(pls_main.Salience   ))]);
 		% disp([' pls_loo: ' num2str(size(pls_loo(ii).Salience))]);
-		disp(['ii = ' num2str(ii)]);
+		disp(['subj = ' num2str(ii)]);
 
 		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
 		
@@ -114,7 +114,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		% pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind(ii,: )), sg(ii,: )) ;
 		% pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind(ii,: )), sg(ii,: )) ;
 
-		disp(['this is it! ', num2str(size(pls_loo(ii).ZSalience( : , index))) ])
+		disp(['this is it! ', num2str(size(pls_loo(ii).ZSalience( : , index))) ]);
 
 		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , index), signs) ;
 		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , index), signs) ;
@@ -198,7 +198,7 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 	numpcs.bs   = size(bs_V  , 2);
 	numpcs      = min(numpcs.orig, numpcs.bs);
 
-	disp(['numpcs is equal to ', num2str(numpcs)]);
+	% disp(['numpcs is equal to ', num2str(numpcs)]);
 
 	r_tmp  = corr(orig_V, bs_V) ;
 	r_sign = sign(r_tmp) ;
@@ -208,19 +208,8 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
-		disp(['[ii, jj] = ', num2str([ii, jj])]);
-
-		if ii > size(r_sign,1)
-			disp('ii is too large');
-			disp(['    ii = ' num2str(size(r_sign,  1))]);
-			disp(['r_sign = ', num2str(size(r_sign, 1))]);
-		end
-
-		if jj > size(r_sign,2)
-			disp('ii is too large');
-			disp(['    ii = ' num2str(size(r_sign,  2))]);
-			disp(['r_sign = ', num2str(size(r_sign, 2))]);
-		end
+		disp(['ii = ' num2str(ii)]);
+		disp(['jj = ' num2str(jj)]);
 
 		% disp(['the relevant r_sign is ', num2str(r_sign(ii, jj))]);
 
