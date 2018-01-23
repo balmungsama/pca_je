@@ -6,19 +6,19 @@
 
 %% user options %%
 
-top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
-output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_testPLS.mat' ;
+% top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
+% output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_testPLS.mat' ;
 
-pipe = 3;
-nboot = 5;
-filters = {'yng', 'sNorm'} ;
+% pipe = 3;
+% nboot = 5;
+% filters = {'yng', 'sNorm'} ;
 
-%% run the function %%
+% %% run the function %%
 
-[pls_fmri.avg_ZSalience, pls_fmri.pls_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
+% [pls_fmri.avg_ZSalience, pls_fmri.pls_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
 
-%% save the output %%
-save(output, 'pls_fmri') ;
+% %% save the output %%
+% save(output, 'pls_fmri') ;
 
 %%%%%%%%%%%%%%%
 %% functions %%
