@@ -8,7 +8,7 @@
 %% user options %%
 
 % top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
-% output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_testPLS.mat' ;
+% output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_testPLS.mat' ;
 
 % pipe = 3;
 % nboot = 5;
@@ -16,7 +16,7 @@
 
 % %% run the function %%
 
-% [pls_fmri.avg_ZSalience, pls_fmri.pls_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
+% [pls_fmri.avg_ZSalience, pls_fmri.pca_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
 
 % %% save the output %%
 % save(output, 'pls_fmri') ;
@@ -25,13 +25,13 @@
 %% functions %%
 %%%%%%%%%%%%%%%
 
-function [avg_ZSalience, pls_out, pls_main, img_dim] = pca_fmri(top_dir, output, pipe, filters, nboot)
+function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output, pipe, filters, nboot)
 
 	if ~exist('nboot')
 		nboot = 1000;
 	end
 
-	filters = ['*' strjoin(filters, '*') '*'] ;
+	filters = ['*' strjoin(filters, '*') '*.nii'] ;
 
 	runs = fullfile(top_dir, filters) ;
 	runs = dir(runs);
@@ -71,9 +71,9 @@ function [avg_ZSalience, pls_out, pls_main, img_dim] = pca_fmri(top_dir, output,
 		xx = zscore(xx);
 
 		% running code
-		[pls_loo(ii).Salience, pls_loo(ii).pcs, pls_loo(ii).ZSalience, pls_loo(ii).VSalience] = run_pca(xx, nboot, nsub);
+		[pca_loo(ii).Salience, pca_loo(ii).pcs, pca_loo(ii).ZSalience, pca_loo(ii).VSalience] = run_pca(xx, nboot, nsub);
 
-		pls_loo(ii).pcs_Xo = xo * pls_loo(ii).Salience ;
+		pca_loo(ii).pcs_Xo = xo * pca_loo(ii).Salience ;
 
 	end
 
@@ -85,16 +85,16 @@ function [avg_ZSalience, pls_out, pls_main, img_dim] = pca_fmri(top_dir, output,
 
 	XX_norm = zscore(XX);
 
-	[pls_main.Salience, pls_main.pcs, pls_main.ZSalience, pls_main.VSalience] = run_pca(XX_norm, nboot, nsub);
+	[pca_main.Salience, pca_main.pcs, pca_main.ZSalience, pca_main.VSalience] = run_pca(XX_norm, nboot, nsub);
 
 	%% averaging the results across each leave-one-out iteration %%
 
-	pls_sort = pls_loo;
+	pca_sort = pca_loo;
 	for ii = 1:nsub
 
-		% disp(['the bs salience is = ', num2str(size(pls_loo(ii).Salience))]);
+		% disp(['the bs salience is = ', num2str(size(pca_loo(ii).Salience))]);
 
-		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
+		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pca_main.Salience, pca_loo(ii).Salience) ;
 
 		sg_tmp  =  sg(ii, :);
 		ind_tmp = ind(ii, :);
@@ -104,25 +104,25 @@ function [avg_ZSalience, pls_out, pls_main, img_dim] = pca_fmri(top_dir, output,
 
 		% disp(['	sg_tmp  = ' num2str( sg_tmp)]);
 		% disp(['	ind_tmp = ' num2str(ind_tmp)]);
-		% disp([' pls_loo = ' num2str( size(pls_loo(ii).ZSalience) ) ]);
+		% disp([' pca_loo = ' num2str( size(pca_loo(ii).ZSalience) ) ]);
 
-		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind_tmp), sg_tmp) ;
-		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind_tmp), sg_tmp) ;
-		pls_sort(ii).pcs       = bsxfun(@times,pls_loo(ii).pcs(       : , ind_tmp), sg_tmp) ;
-		pls_sort(ii).pcs_Xo    = bsxfun(@times,pls_loo(ii).pcs_Xo(    : , ind_tmp), sg_tmp) ;
+		pca_sort(ii).ZSalience = bsxfun(@times,pca_loo(ii).ZSalience( : , ind_tmp), sg_tmp) ;
+		pca_sort(ii).Salience  = bsxfun(@times,pca_loo(ii).Salience(  : , ind_tmp), sg_tmp) ;
+		pca_sort(ii).pcs       = bsxfun(@times,pca_loo(ii).pcs(       : , ind_tmp), sg_tmp) ;
+		pca_sort(ii).pcs_Xo    = bsxfun(@times,pca_loo(ii).pcs_Xo(    : , ind_tmp), sg_tmp) ;
 
 	end
 
-	pls_out = pls_sort;
+	pca_out = pca_sort;
 
 	for ii = 1:nsub
-		avg_ZSalience(:,:,ii) = pls_sort.ZSalience ;
+		avg_ZSalience(:,:,ii) = pca_sort.ZSalience ;
 	end
 
 	avg_ZSalience = mean(avg_ZSalience, 3) ;
 
-	% pls_out.main_boot = pls_main;
-	% pls_out.img_dim   = img_dim;
+	% pca_out.main_boot = pca_main;
+	% pca_out.img_dim   = img_dim;
 
 end
 
