@@ -23,4 +23,6 @@ done
 matlab_cmd="run('/global/home/hpc3586/JE_packages/pca_je/pca_on_fmri.m')"
 matlab_cmd="$top_dir;$output;$pipe;$nboot;$filters;$matlab_cmd"
 
+echo $matlab_cmd
+
 matlab -nodesktop -nosplash -r $matlab_cmd
