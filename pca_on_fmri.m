@@ -3,6 +3,7 @@
 % make sure the bootstrap ratios are all good (try to match Randy's formula)
 % optimize runtime any way possible. This takes WAY too long.
 % add the input SPM filenames to teh final ouput
+% is ignoring the zero the right way to fix sort_eigen_images()? Or should I move the zero index to the end (i.e., value equal to nsub)?
 
 %% user options %%
 
