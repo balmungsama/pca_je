@@ -25,7 +25,7 @@
 %% functions %%
 %%%%%%%%%%%%%%%
 
-function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nboot)
+function [avg_ZSalience, pls_out, pls_main, img_dim] = pca_fmri(top_dir, output, pipe, filters, nboot)
 
 	if ~exist('nboot')
 		nboot = 1000;
@@ -45,7 +45,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		run_spm = run_spm.img ;
 		run_spm = run_spm(:,:,:,pipe);
 		img_dim = size(run_spm);
-		run_spm = reshape(run_spm, [1, prod(size(run_spm))]) ;
+		run_spm = reshape(run_spm, [1, prod(img_dim)]) ;
 
 		XX(run,:) = run_spm ;
 
@@ -56,8 +56,8 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	%% leave-one-out iterations %%
 
 	for ii = 1:nsub
-		disp('-------------------------------');
-		disp(ii);
+		% disp('-------------------------------');
+		disp(['subject ' num2str(ii)]);
 
 		xx       = XX;
 		xo       = XX(ii,:);
@@ -92,7 +92,7 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	pls_sort = pls_loo;
 	for ii = 1:nsub
 
-		disp(['the bs salience is = ', num2str(size(pls_loo(ii).Salience))]);
+		% disp(['the bs salience is = ', num2str(size(pls_loo(ii).Salience))]);
 
 		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pls_main.Salience, pls_loo(ii).Salience) ;
 
@@ -102,8 +102,9 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 		sg_tmp( find(ind_tmp == 0) ) = [];
 		ind_tmp(find(ind_tmp == 0) ) = [];
 
-		disp( sg_tmp);
-		disp(ind_tmp);
+		% disp(['	sg_tmp  = ' num2str( sg_tmp)]);
+		% disp(['	ind_tmp = ' num2str(ind_tmp)]);
+		% disp([' pls_loo = ' num2str( size(pls_loo(ii).ZSalience) ) ]);
 
 		pls_sort(ii).ZSalience = bsxfun(@times,pls_loo(ii).ZSalience( : , ind_tmp), sg_tmp) ;
 		pls_sort(ii).Salience  = bsxfun(@times,pls_loo(ii).Salience(  : , ind_tmp), sg_tmp) ;
@@ -119,6 +120,9 @@ function [avg_ZSalience, pls_out] = pca_fmri(top_dir, output, pipe, filters, nbo
 	end
 
 	avg_ZSalience = mean(avg_ZSalience, 3) ;
+
+	% pls_out.main_boot = pls_main;
+	% pls_out.img_dim   = img_dim;
 
 end
 
@@ -190,8 +194,8 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 	r_sign = sign(r_tmp) ;
 	r_tmp  = abs( r_tmp) ; 
     
-    disp(['dim r_tmp  = ' num2str(size(r_tmp ))]);
-    disp(['dim r_sign = ' num2str(size(r_sign))]);
+  % disp(['dim r_tmp  = ' num2str(size(r_tmp ))]);
+  % disp(['dim r_sign = ' num2str(size(r_sign))]);
 
 % 	disp(numpcs);
 
@@ -199,8 +203,19 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
 
-		disp(['	ii = ' num2str(ii)]);
-		disp(['	jj = ' num2str(jj)]);
+		
+
+		% disp(['	ii = ' num2str(ii)]);
+		% disp(['	jj = ' num2str(jj)]);
+
+		% disp(['	 r_sign dim = ' num2str(size(r_sign))]);
+		% disp(size(ii));
+		% disp(size(jj));
+
+		if size(ii,1) > 1
+			ii = ii(1,1);
+			jj = jj(1,1);
+		end
 
 		pc_ind( ii) = jj;
 		pc_sign(ii) = r_sign(ii, jj) ;
@@ -209,6 +224,6 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 
 	end
 
-	disp('--------------------------------------------------');
+	% disp('--------------------------------------------------');
 
 end
