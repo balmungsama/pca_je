@@ -10,9 +10,14 @@
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
 output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_testPCA.mat' ;
 
+ncpu = 4;
 pipe = 3;
 nboot = 1000;
 filters = {'yng', 'sNorm'} ;
+
+%% start parpool for parellel processing 
+
+parpool(ncpu);
 
 % %% run the function %%
 
@@ -55,7 +60,7 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 
 	%% leave-one-out iterations %%
 
-	for ii = 1:nsub
+	parfor ii = 1:nsub
 
 		disp(['subject ' num2str(ii)]);
 
@@ -86,6 +91,9 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 	XX_norm = zscore(XX);
 
 	[pca_main.Salience, pca_main.pcs, pca_main.ZSalience, pca_main.VSalience] = run_pca(XX_norm, nboot, nsub);
+
+	disp('DONE');
+	delete(gcp('nocreate'));
 
 	%% averaging the results across each leave-one-out iteration %%
 
