@@ -7,8 +7,9 @@
 
 % the package path
 
-pkg_path = '/global/home/hpc3586/JE_packages/pca_je';
-func_paths = fullfile(pkg_path, {'run_decomp.m', 'sort_eigen.m'});
+pkg_path       = '/global/home/hpc3586/JE_packages/pca_je';
+subj_functions = {'run_decomp.m', 'sort_eigen.m'};
+func_paths     = fullfile(pkg_path, subj_functions);
 
 %% user options %%
 
