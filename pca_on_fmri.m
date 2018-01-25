@@ -19,7 +19,7 @@ filters = {'yng', 'sNorm'} ;
 [pls_fmri.avg_ZSalience, pls_fmri.pca_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
 
 % %% save the output %%
-% save(output, 'pls_fmri') ;
+save(output, 'pls_fmri') ;
 
 %%%%%%%%%%%%%%%
 %% functions %%
