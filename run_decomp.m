@@ -28,7 +28,7 @@ function [Salience, pcs, ZSalience, VSalience] = run_pca(XX_norm, nboot, nsub)
 		% svd
 		[Ub, Sigb, Vb] = svd(XX_b, 'econ') ;
 
-		[pc_sort, pc_signs] = sort_eigen_images(V, Vb) ;
+		[pc_sort, pc_signs] = sort_eigen(V, Vb) ;
 
 		Vb_sort = Vb(:, pc_sort);
 		Vb_sort = bsxfun(@times, Vb_sort, pc_signs);
