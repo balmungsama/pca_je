@@ -65,8 +65,11 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 
 	%% leave-one-out iterations %%
 
-	pca_loo = struct('Salience',{NaN(nsub,1)},'pca',{NaN(nsub,1)}, 'ZSalience', {NaN(nsub,1)}, ...
-						'VSalience', {NaN(nsub,1)}, 'pcs_Xo', {NaN(nsub,1)});
+	for ii = 1:nsub
+		pca_loo(ii) = struct('Salience',{NaN},'pca',{NaN}, 'ZSalience', {NaN}, ...
+									'VSalience', {NaN}, 'pcs_Xo', {NaN});
+	end
+
 	parfor ii = 1:nsub
 
 		disp(['subject ' num2str(ii)]);
