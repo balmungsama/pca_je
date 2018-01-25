@@ -17,7 +17,7 @@ filters = {'yng', 'sNorm'} ;
 
 %% start parpool for parellel processing 
 
-parpool(ncpu);
+parpool(ncpu, 'AttachedFiles', 'pca_on_fmri.m');
 
 % %% run the function %%
 
