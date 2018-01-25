@@ -56,7 +56,7 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 	%% leave-one-out iterations %%
 
 	for ii = 1:nsub
-		% disp('-------------------------------');
+
 		disp(['subject ' num2str(ii)]);
 
 		xx       = XX;
@@ -102,10 +102,6 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 		sg_tmp( find(ind_tmp == 0) ) = [];
 		ind_tmp(find(ind_tmp == 0) ) = [];
 
-		% disp(['	sg_tmp  = ' num2str( sg_tmp)]);
-		% disp(['	ind_tmp = ' num2str(ind_tmp)]);
-		% disp([' pca_loo = ' num2str( size(pca_loo(ii).ZSalience) ) ]);
-
 		pca_sort(ii).ZSalience = bsxfun(@times,pca_loo(ii).ZSalience( : , ind_tmp), sg_tmp) ;
 		pca_sort(ii).Salience  = bsxfun(@times,pca_loo(ii).Salience(  : , ind_tmp), sg_tmp) ;
 		pca_sort(ii).pcs       = bsxfun(@times,pca_loo(ii).pcs(       : , ind_tmp), sg_tmp) ;
@@ -120,9 +116,6 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 	end
 
 	avg_ZSalience = mean(avg_ZSalience, 3) ;
-
-	% pca_out.main_boot = pca_main;
-	% pca_out.img_dim   = img_dim;
 
 end
 
@@ -183,9 +176,6 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 	numpcs.orig = size(orig_V, 2);
 	numpcs.bs   = size(bs_V  , 2);
 
-	% disp(['numpcs.orig = ' num2str(numpcs.orig)]);
-	% disp(['numpcs.bs   = ' num2str(numpcs.bs  )]);
-
 	numpcs      = min(numpcs.orig, numpcs.bs);
 
 	% disp(['numpcs is equal to ', num2str(numpcs)]);
@@ -193,24 +183,12 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 	r_tmp  = corr(orig_V, bs_V) ;
 	r_sign = sign(r_tmp) ;
 	r_tmp  = abs( r_tmp) ; 
-    
-  % disp(['dim r_tmp  = ' num2str(size(r_tmp ))]);
-  % disp(['dim r_sign = ' num2str(size(r_sign))]);
 
 % 	disp(numpcs);
 
 	for pc = 1:numpcs
 
 		[ii, jj] = find(r_tmp == max(r_tmp(:))) ;
-
-		
-
-		% disp(['	ii = ' num2str(ii)]);
-		% disp(['	jj = ' num2str(jj)]);
-
-		% disp(['	 r_sign dim = ' num2str(size(r_sign))]);
-		% disp(size(ii));
-		% disp(size(jj));
 
 		if size(ii,1) > 1
 			ii = ii(1,1);
@@ -223,7 +201,5 @@ function [pc_ind, pc_sign] = sort_eigen_images(orig_V, bs_V)
 		r_tmp(:,jj) = -1;
 
 	end
-
-	% disp('--------------------------------------------------');
 
 end
