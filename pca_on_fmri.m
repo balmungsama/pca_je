@@ -8,7 +8,7 @@
 %% user options %%
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
-output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_testPCA.mat' ;
+output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_parpoolPCA.mat' ;
 
 ncpu = 4;
 pipe = 3;
