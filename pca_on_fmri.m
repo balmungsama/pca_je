@@ -3,7 +3,7 @@
 % make sure the bootstrap ratios are all good (try to match Randy's formula)
 % optimize runtime any way possible. This takes WAY too long.
 % add the input SPM filenames to teh final ouput
-% is ignoring the zero the right way to fix sort_eigen_images()? Or should I move the zero index to the end (i.e., value equal to nsub)?
+% is ignoring the zero the right way to fix sort_eigen()? Or should I move the zero index to the end (i.e., value equal to nsub)?
 
 % the package path
 
@@ -86,7 +86,7 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 		xx = zscore(xx);
 
 		% running code
-		[pca_loo(ii).Salience, pca_loo(ii).pcs, pca_loo(ii).ZSalience, pca_loo(ii).VSalience] = run_pca(xx, nboot, nsub);
+		[pca_loo(ii).Salience, pca_loo(ii).pcs, pca_loo(ii).ZSalience, pca_loo(ii).VSalience] = run_decomp(xx, nboot, nsub);
 
 		pca_loo(ii).pcs_Xo = xo * pca_loo(ii).Salience ;
 
@@ -100,7 +100,7 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 
 	XX_norm = zscore(XX);
 
-	[pca_main.Salience, pca_main.pcs, pca_main.ZSalience, pca_main.VSalience] = run_pca(XX_norm, nboot, nsub);
+	[pca_main.Salience, pca_main.pcs, pca_main.ZSalience, pca_main.VSalience] = run_decomp(XX_norm, nboot, nsub);
 
 	disp('DONE');
 	delete(gcp('nocreate'));
@@ -112,7 +112,7 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 
 		% disp(['the bs salience is = ', num2str(size(pca_loo(ii).Salience))]);
 
-		[ind(ii, :), sg(ii, :)] = sort_eigen_images(pca_main.Salience, pca_loo(ii).Salience) ;
+		[ind(ii, :), sg(ii, :)] = sort_eigen(pca_main.Salience, pca_loo(ii).Salience) ;
 
 		sg_tmp  =  sg(ii, :);
 		ind_tmp = ind(ii, :);
