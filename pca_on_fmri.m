@@ -15,10 +15,6 @@ pipe = 3;
 nboot = 1000;
 filters = {'yng', 'sNorm'} ;
 
-%% start parpool for parellel processing 
-
-parpool(ncpu);
-
 % %% run the function %%
 
 [pls_fmri.avg_ZSalience, pls_fmri.pca_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
@@ -60,7 +56,7 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 
 	%% leave-one-out iterations %%
 
-	parfor ii = 1:nsub
+	for ii = 1:nsub
 
 		disp(['subject ' num2str(ii)]);
 
