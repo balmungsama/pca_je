@@ -18,8 +18,8 @@ output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOG
 
 ncpu = 4;
 pipe = 3;
-nboot = 1000;
-filters = {'yng', 'sNorm'} ;
+nboot = 100;
+filters = {'yng', 'run1, 'sNorm'} ;
 
 %% start parpool for parellel processing 
 
