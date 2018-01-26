@@ -9,6 +9,7 @@
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
 output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_testPCA.mat' ;
+mask    = '/global/home/hpc3586/JE_packages/pca_je/bin_fun_MNI152.nii.gz'
 
 ncpu = 4;
 pipe = 3;
@@ -46,6 +47,17 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 		run_spm = run_spm.img ;
 		run_spm = run_spm(:,:,:,pipe);
 		img_dim = size(run_spm);
+
+		if exist('mask')
+			mask = load_nii(mask);
+			mask = mask.img;
+			mask(mask < 1   ) = 0;
+			mask(mask > 1   ) = 1;
+			mask(isnan(mask)) = 0;
+			
+			run_spm = run_spm .* mask;
+		end
+
 		run_spm = reshape(run_spm, [1, prod(img_dim)]) ;
 
 		XX(run,:) = run_spm ;
