@@ -14,13 +14,13 @@ func_paths     = fullfile(pkg_path, subj_functions);
 %% user options %%
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
-output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_parpoolPCA.mat' ;
+output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pca_outcome/yng_parpool_1000.mat' ;
 mask    = '/global/home/hpc3586/JE_packages/pca_je/bin_fun_MNI152.nii.gz'
 
 ncpu = 4;
 pipe = 3;
-nboot = 100;
-filters = {'yng', 'run1', 'sNorm'} ;
+nboot = 1000;
+filters = {'yng', 'sNorm'} ;
 
 %% start parpool for parellel processing 
 
