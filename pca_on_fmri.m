@@ -21,7 +21,7 @@ filters = {'yng', 'sNorm'} ;
 
 % %% run the function %%
 
-[pca_fmri.scans, pca_fmri.pca_out, pca_fmri.scores, pca_fmri.pc_var, pca_fmri.st_coords, pca_fmri.X, pca_fmri.Xnorm] = pca_fmri(top_dir, output, pipe, filters, mask) ;
+[pca_out.scans, pca_out.pca_out, pca_out.scores, pca_out.pc_var, pca_out.st_coords, pca_out.X, pca_out.Xnorm] = pca_fmri(top_dir, output, pipe, filters, mask) ;
 
 % %% save the output %%
 save(output, 'pca_fmri') ;
