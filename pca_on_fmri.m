@@ -15,39 +15,38 @@ func_paths     = fullfile(pkg_path, subj_functions);
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
 output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_parpool_1000.mat' ;
-mask    = '/global/home/hpc3586/JE_packages/pca_je/bin_fun_MNI152.nii.gz'
+mask    = '/global/home/hpc3586/bin_fun_MNI152.nii.gz'
 
-ncpu = 4;
 pipe = 3;
-nboot = 1000;
 filters = {'yng', 'sNorm'} ;
-
-%% start parpool for parellel processing 
-
-parpool(ncpu, 'AttachedFiles', func_paths);
 
 % %% run the function %%
 
-[pls_fmri.avg_ZSalience, pls_fmri.pca_out] = pca_fmri(top_dir, output, pipe, filters, nboot) ;
+[pca_fmri.scans, pca_fmri.pca_out, pca_fmri.scores, pca_fmri.pc_var, pca_fmri.st_coords, pca_fmri.X, pca_fmri.Xnorm] = pca_fmri(top_dir, output, pipe, filters, mask) ;
 
 % %% save the output %%
-save(output, 'pls_fmri') ;
+save(output, 'pca_fmri') ;
 
 %%%%%%%%%%%%%%%
 %% functions %%
 %%%%%%%%%%%%%%%
 
-function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output, pipe, filters, nboot, maks)
-
-	if ~exist('nboot')
-		nboot = 1000;
-	end
+function [runs, pca_out, scores, pc_var, st_coords, XX, XX_norm] = pca_fmri(top_dir, output, pipe, filters, mask)
 
 	filters = ['*' strjoin(filters, '*') '*.nii'] ;
 
 	runs = fullfile(top_dir, filters) ;
 	runs = dir(runs);
 	runs = {runs.name} ;
+
+	if exist('mask')
+		mask      = load_nii(mask) ;
+		mask      = mask.img ;
+		mask      = reshape(mask, [1, prod(size(mask))] ) ;
+		st_coords = find(mask) ;
+
+		img_info.st_coords = st_coords;
+	end
 
 	for run = 1:size(runs,2)
 		run_nm  = runs{run} ;
@@ -58,52 +57,19 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 		run_spm = run_spm(:,:,:,pipe);
 		img_dim = size(run_spm);
 
-		if exist('mask')
-			mask = load_nii(mask);
-			mask = mask.img;
-			mask(mask < 1   ) = 0;
-			mask(mask > 1   ) = 1;
-			mask(isnan(mask)) = 0;
-			
-			run_spm = run_spm .* mask;
-		end
+		img_info.img_dim = img_dim;
 
 		run_spm = reshape(run_spm, [1, prod(img_dim)]) ;
+
+		if exist('mask')
+			run_spm = run_spm(st_coords);
+		end
 
 		XX(run,:) = run_spm ;
 
 	end
 
 	nsub = size(XX,1);
-
-	%% leave-one-out iterations %%
-
-	for ii = 1:nsub
-		pca_loo(ii) = struct('Salience',{NaN},'pcs',{NaN}, 'ZSalience', {NaN}, ...
-									'VSalience', {NaN}, 'pcs_Xo', {NaN});
-	end
-
-	parfor ii = 1:nsub
-
-		disp(['subject ' num2str(ii)]);
-
-		xx       = XX;
-		xo       = XX(ii,:);
-		xx(ii,:) = [];
-
-		xm   = mean(xx);
-		xstd = std(xx);
-
-		% normalization
-		xo = (xo - xm)./xstd;
-		xx = zscore(xx);
-
-		% running code
-		[pca_loo(ii).Salience, pca_loo(ii).pcs, pca_loo(ii).ZSalience, pca_loo(ii).VSalience] = run_decomp(xx, nboot, nsub);
-
-		pca_loo(ii).pcs_Xo = xo * pca_loo(ii).Salience ;
-
-	end
 
 	%% main pca %%
 
@@ -113,40 +79,20 @@ function [avg_ZSalience, pca_out, pca_main, img_dim] = pca_fmri(top_dir, output,
 
 	XX_norm = zscore(XX);
 
-	[pca_main.Salience, pca_main.pcs, pca_main.ZSalience, pca_main.VSalience] = run_decomp(XX_norm, nboot, nsub);
+	[U, Sig, V] = svd(XX_norm, 'econ') ;
+
+	% project eigenimages onto the BOLD image subspace to obtain subject loading scores
+	scores = XX_norm * V ;
+
+	% accounted for variance
+	pc_var = diag(Sig) ;
+	pc_var = pc_var ./ sum(pc_var) ;
+
+	pca_out.U   = U;
+	pca_out.Sig = Sig;
+	pca_out.V   = V;
 
 	disp('DONE');
-	delete(gcp('nocreate'));
-
-	%% averaging the results across each leave-one-out iteration %%
-
-	pca_sort = pca_loo;
-	for ii = 1:nsub
-
-		% disp(['the bs salience is = ', num2str(size(pca_loo(ii).Salience))]);
-
-		[ind(ii, :), sg(ii, :)] = sort_eigen(pca_main.Salience, pca_loo(ii).Salience) ;
-
-		sg_tmp  =  sg(ii, :);
-		ind_tmp = ind(ii, :);
-		
-		sg_tmp( find(ind_tmp == 0) ) = [];
-		ind_tmp(find(ind_tmp == 0) ) = [];
-
-		pca_sort(ii).ZSalience = bsxfun(@times,pca_loo(ii).ZSalience( : , ind_tmp), sg_tmp) ;
-		pca_sort(ii).Salience  = bsxfun(@times,pca_loo(ii).Salience(  : , ind_tmp), sg_tmp) ;
-		pca_sort(ii).pcs       = bsxfun(@times,pca_loo(ii).pcs(       : , ind_tmp), sg_tmp) ;
-		pca_sort(ii).pcs_Xo    = bsxfun(@times,pca_loo(ii).pcs_Xo(    : , ind_tmp), sg_tmp) ;
-
-	end
-
-	pca_out = pca_sort;
-
-	for ii = 1:nsub
-		avg_ZSalience(:,:,ii) = pca_sort.ZSalience ;
-	end
-
-	avg_ZSalience = mean(avg_ZSalience, 3) ;
 
 end
 
