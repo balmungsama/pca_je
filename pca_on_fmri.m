@@ -14,7 +14,7 @@ func_paths     = fullfile(pkg_path, subj_functions);
 %% user options %%
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
-output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_parpool_1000.mat' ;
+output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/yng_pca.mat' ;
 mask    = '/global/home/hpc3586/bin_fun_MNI152.nii.gz'
 
 pipe = 3;
