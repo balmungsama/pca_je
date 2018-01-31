@@ -8,7 +8,7 @@
 % the package path
 
 pkg_path       = '/global/home/hpc3586/JE_packages/pca_je';
-func_paths     = fullfile(pkg_path, subj_functions);
+func_paths     = fullfile(pkg_path);
 
 %% user options %%
 
