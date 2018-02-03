@@ -17,7 +17,7 @@ output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOG
 mask    = '/global/home/hpc3586/bin_fun_MNI152.nii.gz'
 
 pipe = 3;
-filters = {'old', 'sNorm'} ;
+filters = {'sNorm'} ;
 
 % %% run the function %%
 
