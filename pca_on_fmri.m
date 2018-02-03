@@ -13,7 +13,7 @@ func_paths     = fullfile(pkg_path);
 %% user options %%
 
 top_dir = '/global/home/hpc3586/SART_data/output/NOGO/Combined/detrend6_NOGO_sart_combined_erCVA/optimization_results/spms' ;
-output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/old_pca.mat' ;
+output  = '/global/home/hpc3586/SART_data/output_pls/detrend6_combined_clean/NOGO/pls_outcome/all_pca.mat' ;
 mask    = '/global/home/hpc3586/bin_fun_MNI152.nii.gz'
 
 pipe = 3;
@@ -94,7 +94,3 @@ function [runs, pca_out, scores, pc_var, st_coords, XX, XX_norm] = pca_fmri(top_
 	disp('DONE');
 
 end
-
-
-
-
